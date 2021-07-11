@@ -4,4 +4,14 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <Target Name="DisableIisExpress" BeforeTargets="CoreCompile" Condition="'$(BuildingInsideVisualStudio)'!='true'">
+    <Message Importance="High" Text="Disable site (copy app_offline.htm)" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\app_offline.htm" DestinationFolder="." />
+  </Target>
+
+  <Target Name="ReenableIisExpress" BeforeTargets="AfterBuild" Condition="Exists('./app_offline.htm')">
+    <Message Importance="High" Text="Enable site (delete app_Offline.htm)" />
+    <Delete Files=".\app_offline.htm" />
+  </Target>
+
 </Project>
