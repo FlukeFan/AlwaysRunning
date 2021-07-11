@@ -18,7 +18,7 @@ namespace Server
 
             CreateHostBuilder(args).Build().Run();
 
-            File.AppendAllText("running.txt", $" Stopped at {DateTimeOffset.Now}");
+            File.AppendAllText("running.txt", $"\nStopped at {DateTimeOffset.Now}");
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
