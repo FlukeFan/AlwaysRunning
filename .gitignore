@@ -1,0 +1,9 @@
+bin
+obj
+.vs
+.vscode
+.build
+*.user
+logs
+auth_ex_security_db
+/Site/running.txt
