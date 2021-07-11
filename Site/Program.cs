@@ -20,14 +20,14 @@ namespace Server
             using (_timer = new Timer(WriteToLog))
             {
                 _startedAt = DateTime.Now;
-                Log($"Site started at {_startedAt}");
+                Log($"Site STARTED at {_startedAt}");
 
                 _timer.Change(3000, Timeout.Infinite);
 
                 CreateHostBuilder(args).Build().Run();
             }
 
-            Log($"Stopped at {DateTimeOffset.Now}");
+            Log($"STOPPED at {DateTimeOffset.Now}");
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
