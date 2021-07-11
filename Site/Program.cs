@@ -19,18 +19,15 @@ namespace Server
         {
             using (_timer = new Timer(WriteToLog))
             {
-                if (!File.Exists(_logFile))
-                    File.WriteAllText(_logFile, $"Log started at {DateTimeOffset.Now}");
-
                 _startedAt = DateTime.Now;
-                File.AppendAllText(_logFile, $"\nSite started at {_startedAt}");
+                Log($"Site started at {_startedAt}");
 
                 _timer.Change(3000, Timeout.Infinite);
 
                 CreateHostBuilder(args).Build().Run();
             }
 
-            File.AppendAllText(_logFile, $"\nStopped at {DateTimeOffset.Now}");
+            Log($"Stopped at {DateTimeOffset.Now}");
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -44,13 +41,21 @@ namespace Server
         {
             try
             {
-                File.AppendAllText(_logFile, $"\nSite running at {DateTimeOffset.Now}");
+                Log($"Site running at {DateTimeOffset.Now}");
             }
             catch { }
             finally
             {
                 _timer.Change(3000, Timeout.Infinite);
             }
+        }
+
+        private static void Log(string message)
+        {
+            if (!File.Exists(_logFile))
+                File.WriteAllText(_logFile, $"Log started at {DateTimeOffset.Now}\n");
+
+            File.AppendAllText(_logFile, $"{message}\n");
         }
     }
 }
