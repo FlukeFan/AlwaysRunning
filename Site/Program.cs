@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -7,18 +8,29 @@ namespace Server
 {
     public class Program
     {
-        public static DateTimeOffset _startedAt;
+        private const string _logFile = "running.log";
+
+        private static DateTimeOffset _startedAt;
+        private static Timer _timer;
 
         public static DateTimeOffset StartedAt => _startedAt;
 
         public static void Main(string[] args)
         {
-            _startedAt = DateTime.Now;
-            File.WriteAllText("running.txt", $"Site running at {_startedAt}");
+            using (_timer = new Timer(WriteToLog))
+            {
+                if (!File.Exists(_logFile))
+                    File.WriteAllText(_logFile, $"Log started at {DateTimeOffset.Now}");
 
-            CreateHostBuilder(args).Build().Run();
+                _startedAt = DateTime.Now;
+                File.AppendAllText(_logFile, $"\nSite started at {_startedAt}");
 
-            File.AppendAllText("running.txt", $"\nStopped at {DateTimeOffset.Now}");
+                _timer.Change(3000, Timeout.Infinite);
+
+                CreateHostBuilder(args).Build().Run();
+            }
+
+            File.AppendAllText(_logFile, $"\nStopped at {DateTimeOffset.Now}");
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -27,5 +39,18 @@ namespace Server
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        private static void WriteToLog(object _)
+        {
+            try
+            {
+                File.AppendAllText(_logFile, $"\nSite running at {DateTimeOffset.Now}");
+            }
+            catch { }
+            finally
+            {
+                _timer.Change(3000, Timeout.Infinite);
+            }
+        }
     }
 }

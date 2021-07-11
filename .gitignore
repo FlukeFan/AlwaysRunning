@@ -6,4 +6,4 @@ obj
 *.user
 logs
 auth_ex_security_db
-/Site/running.txt
+/Site/running.log
